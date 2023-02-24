@@ -1,14 +1,27 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import store from "./shared/redux/store";
+
+// persist state "auth"
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./index.css";
 import App from "./App";
+import "./index.css";
 // import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+let persistor = persistStore(store);
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      {/* PersistGate => delays the rendering of UI until the persisted state has been retrrieved and saved to redux */}
+      <PersistGate persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
   </React.StrictMode>
 );
 
