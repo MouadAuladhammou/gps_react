@@ -8,7 +8,7 @@ export const isObjectEmpty = (object) => {
 export const refreshToken = async (refreshToken) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/admin/refresh",
+      "http://64.226.124.200/api/admin/refresh",
       {
         token: refreshToken,
       }

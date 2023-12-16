@@ -45,5 +45,6 @@ export const responseHandler = (response) => {
 
 // error handlers
 export const errorHandler = (error) => {
+  error.test = "test message error ...";
   return Promise.reject(error);
 };

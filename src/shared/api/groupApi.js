@@ -7,7 +7,7 @@ import {
 
 const axiosJWT = axios.create({
   // baseURL: "http://localhost:3000/api/users",
-  baseURL: "http://64.226.124.200/api/users",
+  baseURL: "http://64.226.124.200/api/groups",
   timeout: 10000,
 });
 

@@ -40,7 +40,7 @@ export const updateAsyncAdmin = createAsyncThunk(
     //   "http://localhost:3000/api/users/register",
     //   payload
     // );
-    // return response.data.vehucle;
+    // return response.data.vehicle;
     return payload;
   }
 );
@@ -52,7 +52,7 @@ export const deleteAsyncAdmin = createAsyncThunk(
     //   "http://localhost:3000/api/users/register",
     //   payload
     // );
-    // return response.data.vehucle;
+    // return response.data.vehicle;
     return { id: payload.id };
   }
 );

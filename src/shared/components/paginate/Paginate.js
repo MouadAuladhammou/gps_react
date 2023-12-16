@@ -10,7 +10,7 @@ const Paginate = ({ totalPages, paginate, currentPage }) => {
           onClick={() => paginate(number)}
           active={number === currentPage}
           className={
-            currentPage == number ? "page-number active" : "page-number"
+            currentPage === number ? "page-number active" : "page-number"
           }
         >
           {number + 1}

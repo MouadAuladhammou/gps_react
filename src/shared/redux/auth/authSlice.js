@@ -8,7 +8,7 @@ export const loginAsync = createAsyncThunk(
   async (payload, { getState }) => {
     // const currentAdmin = getState()?.auth?.currentAdmin
     const response = await axios.post(
-      "http://localhost:3000/api/admin/login",
+      "http://64.226.124.200/api/admin/login",
       payload
     );
     // set Tokens in LocalStorage

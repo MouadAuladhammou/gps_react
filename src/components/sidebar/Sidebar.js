@@ -1,22 +1,13 @@
 import React from "react";
-import {
-  Sidebar as Sidebar_,
-  Menu,
-  MenuItem,
-  SubMenu,
-} from "react-pro-sidebar";
+import { Sidebar as Sidebar_, Menu, MenuItem } from "react-pro-sidebar";
 import { Link, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import "./Sidebar.scss";
 
 import { isLoggedIn } from "../../shared/redux/auth/authSlice";
 
 const Sidebar = () => {
   const isLogged = useSelector(isLoggedIn);
-
-  // useEffect(() => {
-
-  // }, []);
 
   const { pathname } = useLocation();
   return (
@@ -34,10 +25,16 @@ const Sidebar = () => {
             Users
           </MenuItem>
           <MenuItem
-            active={pathname === "/admins"}
-            component={<Link to="/admins" />}
+            active={pathname === "/settings "}
+            component={<Link to="/settings " />}
           >
-            Admins
+            Paramètre
+          </MenuItem>
+          <MenuItem
+            active={pathname === "/server"}
+            component={<Link to="/server" />}
+          >
+            Serveur
           </MenuItem>
           <MenuItem
             active={pathname === "/test"}

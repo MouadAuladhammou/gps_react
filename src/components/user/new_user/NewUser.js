@@ -1,206 +1,341 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
 
 // reducer
-import { addAsyncUser } from "../../../shared/redux/users/userSlice";
+import {
+  addAsyncUser,
+  getError,
+  clearError,
+} from "../../../shared/redux/users/userSlice";
+
+import Card from "react-bootstrap/Card";
+import Alert from "react-bootstrap/Alert";
 
 const NewUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const error = useSelector(getError);
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      handleClearError();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (error.exists) {
+      setShowAlert(true);
+      // Définir l'erreur personnalisée
+      setError(error.existingField, {
+        type: "manual",
+        message: `"${error.existingField}" saisi est utilisé par un autre utilisateur`,
+      });
+
+      // Swal.fire({
+      //   title: `"${error.existingField}" saisi est utilisé par un autre utilisateur`,
+      //   icon: "error",
+      //   confirmButtonColor: "#3085d6",
+      //   cancelButtonColor: "#d33",
+      //   confirmButtonText: "Ok",
+      // }).then((result) => {
+      //   if (result.isConfirmed) {
+      //   }
+      // });
+    }
+  }, [error]);
+
+  const handleClearError = () => {
+    dispatch(clearError());
+  };
+
   const {
     register,
     handleSubmit,
+    setError,
     control,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     mode: "onBlur",
     defaultValues: {
-      last_name: "Aoulad Hammoud",
-      first_name: "Mouad",
-      email: "cccc@gmailrr.com",
-      cin: "L234543",
-      address: "mhanech 2 tetouan",
-      city: "tetouan",
-      postal_code: "93000",
-      cell_phone: "0606060606",
-      work_phone: "0706060606",
-      password: "23456",
+      last_name: "",
+      first_name: "",
+      email: "",
+      cin: "",
+      address: "",
+      city: "",
+      postal_code: "",
+      cell_phone: "",
+      work_phone: "",
+      password: "",
     },
   });
 
   const onSubmit = async (data) => {
-    let newUser = {
-      isNew: true,
-      ...data,
-    };
-    try {
-      const resultAction = await dispatch(addAsyncUser(newUser));
-      console.log("resultAction", resultAction);
-      if (resultAction.type === "users/addAsyncUser/fulfilled") {
-        Swal.fire("Meal added", "", "success");
-        navigate("/", { replace: true });
+    if (isValid) {
+      let newUser = {
+        isNew: true,
+        ...data,
+      };
+      try {
+        const resultAction = await dispatch(addAsyncUser(newUser));
+        if (resultAction.type === "users/addAsyncUser/rejected") {
+        } else {
+          navigate("/", { replace: true });
+        }
+      } catch (err) {
+        console.error("Failed to save the post: ", err);
+      } finally {
       }
-    } catch (err) {
-      console.error("Failed to save the post: ", err);
-    } finally {
     }
   };
 
   return (
-    <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <h4>Add new Meal</h4>
+    <Card>
+      <Card.Body>
+        <Card.Title>
+          Ajouter un nouvel utilisateur
+          <hr />
+        </Card.Title>
 
-        <Form.Group className="mb-3" controlId="mealName">
-          <Form.Label>Prenom</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter meal name"
-            {...register("first_name", {
-              required: "is required",
-            })}
-          />
-          <Form.Text className="text-muted">
-            {errors.first_name?.message}
-          </Form.Text>
-        </Form.Group>
+        {showAlert && error.exists && (
+          <Alert
+            variant="danger"
+            onClose={() => setShowAlert(false)}
+            dismissible
+          >
+            <Alert.Heading>Erreur!</Alert.Heading>
+            <p>
+              <strong>{error.existingField}</strong> saisi est utilisé par un
+              autre utilisateur.
+            </p>
+          </Alert>
+        )}
 
-        <Form.Group className="mb-3" controlId="mealName">
-          <Form.Label>Nom</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter meal name"
-            {...register("last_name", {
-              required: "is required",
-            })}
-          />
-          <Form.Text className="text-muted">
-            {errors.last_name?.message}
-          </Form.Text>
-        </Form.Group>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <div className="row">
+            <div className="col-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Prenom</Form.Label>
+                <Form.Control
+                  type="text"
+                  className={errors.first_name && "border-red"}
+                  placeholder="Prenom"
+                  {...register("first_name", {
+                    required: "Veuillez saisir le champ Prenom",
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.first_name?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-        <Form.Group className="mb-3" controlId="mealName">
-          <Form.Label>cin</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter meal name"
-            {...register("cin", {
-              required: "is required",
-            })}
-          />
-          <Form.Text className="text-muted">{errors.cin?.message}</Form.Text>
-        </Form.Group>
+            <div className="col-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Nom</Form.Label>
+                <Form.Control
+                  type="text"
+                  className={errors.last_name && "border-red"}
+                  placeholder="Nom"
+                  {...register("last_name", {
+                    required: "Veuillez saisir le champ Nom",
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.last_name?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-        <Form.Group className="mb-3" controlId="mealName">
-          <Form.Label>address</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter meal name"
-            {...register("address", {
-              required: "is required",
-            })}
-          />
-          <Form.Text className="text-muted">
-            {errors.address?.message}
-          </Form.Text>
-        </Form.Group>
+            <div className="col-4">
+              <Form.Group className="mb-3">
+                <Form.Label>CIN</Form.Label>
+                <Form.Control
+                  type="text"
+                  className={errors.cin && "border-red"}
+                  placeholder="Cin"
+                  {...register("cin", {
+                    required:
+                      "Veuillez saisir le champ CIN (maximum 10 caractères)",
+                    maxLength: {
+                      value: 10,
+                      message:
+                        "Le champ CIN ne peut pas dépasser 10 caractères",
+                    },
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.cin?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-        <Form.Group className="mb-3" controlId="mealName">
-          <Form.Label>city</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter meal name"
-            {...register("city", {
-              required: "is required",
-            })}
-          />
-          <Form.Text className="text-muted">{errors.city?.message}</Form.Text>
-        </Form.Group>
+            <div className="col-8">
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  className={errors.email && "border-red"}
+                  placeholder="Email"
+                  {...register("email", {
+                    required: "Veuillez saisir le champ Email",
+                    pattern: {
+                      value:
+                        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                      message: "Adresse Email invalide",
+                    },
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.email?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-        <Form.Group className="mb-3" controlId="mealName">
-          <Form.Label>postal_code</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter meal name"
-            {...register("postal_code", {
-              required: "is required",
-            })}
-          />
-          <Form.Text className="text-muted">
-            {errors.postal_code?.message}
-          </Form.Text>
-        </Form.Group>
+            <div className="col-3">
+              <Form.Group className="mb-3">
+                <Form.Label>Ville</Form.Label>
+                <Form.Control
+                  type="text"
+                  className={errors.city && "border-red"}
+                  placeholder="Ville"
+                  {...register("city", {
+                    required: "Veuillez saisir le champ Ville",
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.city?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-        <Form.Group className="mb-3" controlId="price">
-          <Form.Label>cell_phone</Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Enter meal price"
-            {...register("cell_phone", {
-              required: "is required",
-              min: {
-                value: 1,
-                message: "minimum price is $1",
-              },
-            })}
-          />
-          <Form.Text className="text-muted">
-            {errors.cell_phone?.message}
-          </Form.Text>
-        </Form.Group>
+            <div className="col-3">
+              <Form.Group className="mb-3">
+                <Form.Label>Code Postal</Form.Label>
+                <Form.Control
+                  type="text"
+                  className={errors.postal_code && "border-red"}
+                  placeholder="Code Postal"
+                  {...register("postal_code", {
+                    required: "Veuillez saisir le champ Code Postal",
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.postal_code?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-        <Form.Group className="mb-3" controlId="price">
-          <Form.Label>work_phone</Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Enter meal price"
-            {...register("work_phone", {
-              required: "is required",
-              min: {
-                value: 1,
-                message: "minimum price is $1",
-              },
-            })}
-          />
-          <Form.Text className="text-muted">
-            {errors.work_phone?.message}
-          </Form.Text>
-        </Form.Group>
+            <div className="col-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Adresse</Form.Label>
+                <Form.Control
+                  type="text"
+                  className={errors.address && "border-red"}
+                  placeholder="Adresse"
+                  {...register("address", {
+                    required: "Veuillez saisir le champ Adresse",
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.address?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-        <Form.Group className="mb-3" controlId="price">
-          <Form.Label>password</Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Enter meal price"
-            {...register("password", {
-              required: "is required",
-              min: {
-                value: 1,
-                message: "minimum price is $1",
-              },
-            })}
-          />
-          <Form.Text className="text-muted">
-            {errors.password?.message}
-          </Form.Text>
-        </Form.Group>
+            <div className="col-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Téléphone portable</Form.Label>
+                <Form.Control
+                  type="number"
+                  className={errors.cell_phone && "border-red"}
+                  placeholder="Téléphone portable"
+                  {...register("cell_phone", {
+                    required:
+                      "Veuillez saisir le champ Téléphone portable (maximum 15 caractères)",
+                    maxLength: {
+                      value: 15,
+                      message:
+                        "Le champ Téléphone portable ne peut pas dépasser 15 caractères",
+                    },
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.cell_phone?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-        <Button variant="warning" type="submit" onClick={() => navigate("/")}>
-          Cancel
-        </Button>
-      </Form>
-    </>
+            <div className="col-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Téléphone de travail</Form.Label>
+                <Form.Control
+                  type="number"
+                  className={errors.work_phone && "border-red"}
+                  placeholder="Téléphone de travail"
+                  {...register("work_phone", {
+                    required:
+                      "Veuillez saisir le champ Téléphone de travail (maximum 15 caractères)",
+                    maxLength: {
+                      value: 15,
+                      message:
+                        "Le champ Téléphone de travail ne peut pas dépasser 15 caractères",
+                    },
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.work_phone?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
+
+            <div className="col-6">
+              <Form.Group className="mb-3">
+                <Form.Label>Mot de passe</Form.Label>
+                <Form.Control
+                  type="text"
+                  className={errors.password && "border-red"}
+                  placeholder="Mot de passe"
+                  {...register("password", {
+                    required:
+                      "Veuillez saisir le champ Mot de passe (minimum 6 caractères)",
+                    minLength: {
+                      value: 6,
+                      message:
+                        "Le Mot de passe doit contenir au moins 6 caractères",
+                    },
+                  })}
+                />
+                <Form.Text className="text-muted">
+                  {errors.password?.message}
+                </Form.Text>
+              </Form.Group>
+            </div>
+          </div>
+
+          <Button variant="primary" type="submit" className="mx-1">
+            Enregistrer
+          </Button>
+          <Button
+            variant="warning"
+            type="submit"
+            className="mx-1"
+            onClick={() => navigate("/")}
+          >
+            Annuler
+          </Button>
+        </Form>
+      </Card.Body>
+    </Card>
   );
 };
 

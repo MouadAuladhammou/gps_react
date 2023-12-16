@@ -19,7 +19,7 @@ const Login = () => {
       const resultAction = await dispatch(loginAsync({ email, password }));
       console.log("resultAction", resultAction);
       if (resultAction.type === "auth/loginAsync/fulfilled") {
-        Swal.fire("connected", "", "success");
+        // Swal.fire("connected", "", "success");
       }
     } catch (err) {
       console.log(err);
@@ -31,7 +31,7 @@ const Login = () => {
       const resultAction = await dispatch(deleteAsyncUser(id));
       console.log("resultAction", resultAction);
       if (resultAction.type === "users/deleteAsyncUser/fulfilled") {
-        Swal.fire("user deleted", "", "success");
+        // Swal.fire("user deleted", "", "success");
       }
     } catch (err) {
       console.log("err", err);

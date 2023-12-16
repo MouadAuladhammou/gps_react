@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ProSidebarProvider } from "react-pro-sidebar";
 
@@ -18,7 +19,14 @@ import Sidebar from "./components/sidebar/Sidebar";
 import Login from "./components/login/Login";
 import "./App.scss";
 
+// Reducer
+import { getLoadingStatus } from "./shared/redux/users/userSlice";
+
+// Constants
+import { HTTP_STATUS } from "./shared/helpers/constants";
+
 function App() {
+  const loading = useSelector(getLoadingStatus); // User
   return (
     <div>
       <Router>
@@ -33,8 +41,8 @@ function App() {
                 <Route path="/" element={<Home />}>
                   <Route path="/user/:id" element={<UserDetail />} />
                   <Route path="/edit/user/:id" element={<EditUser />} />
+                  <Route path="/add/user" element={<NewUser />} />
                 </Route>
-                <Route path="/add/user" element={<NewUser />} />
                 <Route path="*" element={<PageNotFound />} />
               </Route>
               <Route element={<PrivateRoutesLoggedout />}>
@@ -45,6 +53,23 @@ function App() {
         </div>
         <Footer />
       </Router>
+      {loading === HTTP_STATUS.PENDING && (
+        <div className="spinner">
+          <div className="lds-roller">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <strong>Loading...</strong>
+        </div>
+      )}
+      {loading === HTTP_STATUS.REJECTED && <>Error ....</>}
+      {loading === HTTP_STATUS.FULFILLED && <></>}
     </div>
   );
 }

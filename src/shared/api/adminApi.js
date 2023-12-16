@@ -6,7 +6,7 @@ import {
 } from "../helpers/http_interceptors/interceptors";
 
 const axiosJWT = axios.create({
-  baseURL: "http://localhost:3000/api/admin",
+  baseURL: "http://64.226.124.200/api/admin",
 });
 
 // Configure/make use of request & response interceptors from Axios

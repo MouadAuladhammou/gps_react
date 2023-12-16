@@ -17,13 +17,13 @@
   border-radius: 10px;
 }
 
-form {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-}
+// form {
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: space-around;
+// }
 
 .formTitle {
   color: teal;
@@ -31,7 +31,7 @@ form {
 }
 
 input {
-  height: 30px;
+  // height: 30px;
   border: none;
   border-bottom: 1px solid lightgray;
 }
