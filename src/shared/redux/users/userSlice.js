@@ -19,7 +19,6 @@ export const fetchAsyncUsers = createAsyncThunk(
 export const fetchAsyncUserDetail = createAsyncThunk(
   "users/fetchAsyncUserDetail",
   async (id) => {
-    // const response = await userApi.get(`/${id}/companies`);
     const response = await userApi.get(`/show/${id}`);
     return response.data;
   }
@@ -47,8 +46,8 @@ export const updateAsyncUser = createAsyncThunk(
   "users/updateAsyncUser",
   async (payload, { rejectWithValue }) => {
     try {
-      await userApi.put(`/`, payload);
-      return { user: payload };
+      const response = await userApi.put(`/`, payload);
+      return { user: response.data };
     } catch (error) {
       if (error.response.status === 409) {
         // NB: "409" is the correct status code for duplicate resource or resource already exists.
@@ -65,7 +64,7 @@ export const deleteAsyncUser = createAsyncThunk(
   "users/deleteAsyncUser",
   async (id) => {
     const response = await userApi.delete(`/${id}`);
-    if (response.status === 200) {
+    if (response.status === 204) {
       return { id };
     }
   }
@@ -75,7 +74,7 @@ export const deleteAsyncGroup = createAsyncThunk(
   "users/deleteAsyncGroup",
   async (id) => {
     const response = await groupApi.delete(`/${id}`);
-    if (response.status === 200) {
+    if (response.status === 204) {
       return { id };
     }
   }
@@ -132,7 +131,7 @@ export const deleteAsyncVehicle = createAsyncThunk(
   "users/deleteAsyncVehicle",
   async (id) => {
     const response = await vehicleApi.delete(`/${id}`);
-    if (response.status === 200) {
+    if (response.status === 204) {
       return { id };
     }
   }
