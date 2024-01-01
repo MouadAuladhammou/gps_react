@@ -16,9 +16,11 @@ export const requestHandler = async (request) => {
       const decodedRefreshToken = jwt_decode(currentAdmin.refreshToken);
       if (decodedRefreshToken.exp * 1000 < currentDate.getTime()) {
         console.log("refreshToken NO");
-        // throw error
         window.localStorage.clear();
-        throw new Error("RefreshToken is invalid");
+        // NB: On poursuit l'opération afin de traiter le Token dans Node.js et le supprimer de Redis
+        let dataToken = await refreshToken(currentAdmin.refreshToken);
+        request.headers["authorization"] = "Bearer " + dataToken.accessToken;
+        // throw new Error("RefreshToken is invalid");
       } else {
         // Si "refreshToken" est valide, on fait d'abort une requête afin d'obtenir de nouveaux tokens à utiliser
         console.log("refreshToken is valid");

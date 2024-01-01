@@ -29,7 +29,8 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logOut: (state) => {
+    logOut: async (state, { payload }) => {
+      await axios.post("http://64.226.124.200/api/admin/logout", payload);
       state.currentAdmin = {};
       localStorage.clear();
       window.location = "/login";

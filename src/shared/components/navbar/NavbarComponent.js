@@ -17,7 +17,9 @@ const NavbarComponent = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    dispatch(logOut());
+    let currentAdmin = JSON.parse(window.localStorage.getItem("tokens"));
+    if (currentAdmin.refreshToken)
+      dispatch(logOut({ token: currentAdmin.refreshToken }));
   };
 
   return (

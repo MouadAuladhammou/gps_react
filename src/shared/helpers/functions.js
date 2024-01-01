@@ -17,6 +17,7 @@ export const refreshToken = async (refreshToken) => {
     window.localStorage.setItem("tokens", JSON.stringify(response.data));
     return response.data;
   } catch (err) {
+    window.localStorage.clear();
     console.log("Error - refreshToken : ", err);
   }
 };
