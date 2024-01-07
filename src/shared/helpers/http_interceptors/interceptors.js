@@ -33,6 +33,7 @@ export const requestHandler = async (request) => {
     return request;
   } catch (error) {
     console.error(error);
+    localStorage.clear();
     window.location = "/login";
   }
 };
@@ -40,6 +41,7 @@ export const requestHandler = async (request) => {
 // response handlers
 export const responseHandler = (response) => {
   if (response.status === 401) {
+    localStorage.clear();
     window.location = "/login";
   }
   return response;

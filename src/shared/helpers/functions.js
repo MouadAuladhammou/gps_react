@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const isObjectEmpty = (object) => {
+  if (!object) return true;
   return Object.keys(object).length === 0;
 };
 
